@@ -1,0 +1,35 @@
+{
+  "name": "mcp-diagnostics",
+  "version": "1.0.0",
+  "description": "MCP Server for reading VS Code diagnostics via Debug Adapter Protocol",
+  "main": "dist/index.js",
+  "bin": {
+    "mcp-diagnostics": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs --target node18 --minify",
+    "dev": "tsx src/index.ts",
+    "start": "node dist/index.js"
+  },
+  "keywords": [
+    "mcp",
+    "vscode",
+    "diagnostics",
+    "debug-adapter"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "vscode-debugadapter": "^1.51.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "tsup": "^8.0.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.4.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

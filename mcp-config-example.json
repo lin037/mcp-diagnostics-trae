@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "diagnostics": {
+      "command": "npx",
+      "args": ["-y", "E:/MCPWork/trae-diagnostics/mcp"],
+      "description": "VS Code 诊断信息读取工具"
+    }
+  }
+}
