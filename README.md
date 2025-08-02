@@ -8,6 +8,10 @@
 
 一个专门为 Trae IDE 开发的 MCP (Model Context Protocol) 服务器，让 Trae 的 AI Agent 能够实时获取项目中的错误、警告和提示信息，从而提供更智能的代码分析和建议。
 
+<a href="https://glama.ai/mcp/servers/@lin037/mcp-diagnostics-trae">
+  <img width="380" height="200" src="https://glama.ai/mcp/servers/@lin037/mcp-diagnostics-trae/badge" alt="Diagnostics MCP server" />
+</a>
+
 > **English Documentation**: [README_EN.md](README_EN.md)
 
 ## 🌟 功能特性
