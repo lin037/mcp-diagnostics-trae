@@ -99,37 +99,26 @@ class MCPDiagnosticsServer {
     this.server.setRequestHandler(CallToolRequestSchema, async (request) => {
       const { name, arguments: args } = request.params;
 
-      try {
-        switch (name) {
-          case 'getDiagnostics':
-            return await this.handleGetDiagnostics();
+      // 不需要额外的 try-catch 块，因为顶层已经有错误处理
+      // 每个 handle 函数内部将处理特定的错误
+      switch (name) {
+        case 'getDiagnostics':
+          return await this.handleGetDiagnostics();
 
-          case 'getDiagnosticsForFile':
-            return await this.handleGetDiagnosticsForFile(args as { fileUri: string });
+        case 'getDiagnosticsForFile':
+          return await this.handleGetDiagnosticsForFile(args as { fileUri: string });
 
-          case 'getDiagnosticsForPath':
-            return await this.handleGetDiagnosticsForPath(args as { filePath: string });
+        case 'getDiagnosticsForPath':
+          return await this.handleGetDiagnosticsForPath(args as { filePath: string });
 
-          case 'getDiagnosticsSummary':
-            return await this.handleGetDiagnosticsSummary();
+        case 'getDiagnosticsSummary':
+          return await this.handleGetDiagnosticsSummary();
 
-          default:
-            throw new McpError(
-              ErrorCode.MethodNotFound,
-              `未知工具: ${name}`
-            );
-        }
-      } catch (error) {
-        console.error(`工具 ${name} 执行失败:`, error);
-        
-        if (error instanceof McpError) {
-          throw error;
-        }
-        
-        throw new McpError(
-          ErrorCode.InternalError,
-          `工具执行失败: ${error instanceof Error ? error.message : String(error)}`
-        );
+        default:
+          throw new McpError(
+            ErrorCode.MethodNotFound,
+            `未知工具: ${name}`
+          );
       }
     });
   }
@@ -138,86 +127,142 @@ class MCPDiagnosticsServer {
    * 处理获取所有诊断信息
    */
   private async handleGetDiagnostics() {
-    const diagnostics = await this.diagnosticsClient.getDiagnostics();
-    
-    return {
-      content: [
-        {
-          type: 'text',
-          text: JSON.stringify(diagnostics, null, 2),
-        },
-      ],
-    };
+    try {
+      const diagnostics = await this.diagnosticsClient.getDiagnostics();
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(diagnostics, null, 2),
+          },
+        ],
+      };
+    } catch (error) {
+      throw new McpError(
+        ErrorCode.InternalError,
+        `[handleGetDiagnostics] ${error instanceof Error ? error.message : String(error)}`
+      );
+    }
   }
 
   /**
    * 处理获取指定文件的诊断信息
    */
   private async handleGetDiagnosticsForFile(args: { fileUri: string }) {
-    if (!args.fileUri) {
+    if (!args || !args.fileUri) {
+      throw new McpError(ErrorCode.InvalidParams, '缺少必需参数: fileUri');
+    }
+    try {
+      const diagnostics = await this.diagnosticsClient.getDiagnosticsForFile(args.fileUri);
+      if (!diagnostics || diagnostics.length === 0) {
+        return {
+          content: [
+            {
+              type: 'text',
+              text: '未找到指定 URI 的文件或该文件没有诊断信息。',
+            },
+          ],
+        };
+      }
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(diagnostics, null, 2),
+          },
+        ],
+      };
+    } catch (error) {
       throw new McpError(
-        ErrorCode.InvalidParams,
-        '缺少必需参数: fileUri'
+        ErrorCode.InternalError,
+        `[handleGetDiagnosticsForFile] ${error instanceof Error ? error.message : String(error)}`
       );
     }
-
-    console.error(`收到文件诊断请求: ${args.fileUri}`);
-    
-    const diagnostics = await this.diagnosticsClient.getDiagnosticsForFile(args.fileUri);
-    
-    console.error(`返回诊断结果: ${diagnostics.length} 个文件匹配`);
-    
-    return {
-      content: [
-        {
-          type: 'text',
-          text: JSON.stringify(diagnostics, null, 2),
-        },
-      ],
-    };
   }
 
   /**
    * 处理根据文件路径获取诊断信息
    */
   private async handleGetDiagnosticsForPath(args: { filePath: string }) {
-    if (!args.filePath) {
+    if (!args || !args.filePath) {
+      throw new McpError(ErrorCode.InvalidParams, '缺少必需参数: filePath');
+    }
+    try {
+      const diagnostics = await this.diagnosticsClient.getDiagnosticsForPath(args.filePath);
+      if (!diagnostics || diagnostics.length === 0) {
+        return {
+          content: [
+            {
+              type: 'text',
+              text: '未找到匹配该路径的文件。',
+            },
+          ],
+        };
+      }
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(diagnostics, null, 2),
+          },
+        ],
+      };
+    } catch (error) {
       throw new McpError(
-        ErrorCode.InvalidParams,
-        '缺少必需参数: filePath'
+        ErrorCode.InternalError,
+        `[handleGetDiagnosticsForPath] ${error instanceof Error ? error.message : String(error)}`
       );
     }
-
-    console.error(`收到路径诊断请求: ${args.filePath}`);
-    
-    const diagnostics = await this.diagnosticsClient.getDiagnosticsForPath(args.filePath);
-    
-    console.error(`返回路径诊断结果: ${diagnostics.length} 个文件匹配`);
-    
-    return {
-      content: [
-        {
-          type: 'text',
-          text: JSON.stringify(diagnostics, null, 2),
-        },
-      ],
-    };
   }
 
   /**
    * 处理获取诊断统计信息
    */
   private async handleGetDiagnosticsSummary() {
-    const summary = await this.diagnosticsClient.getDiagnosticsSummary();
-    
-    return {
-      content: [
-        {
-          type: 'text',
-          text: JSON.stringify(summary, null, 2),
-        },
-      ],
-    };
+    try {
+      const diagnostics = await this.diagnosticsClient.getDiagnostics();
+      let errorCount = 0;
+      let warningCount = 0;
+
+      diagnostics.forEach((fileDiagnosticTuple) => {
+        // fileDiagnosticTuple is a tuple [uri: any, diagnostics: Diagnostic[]]
+        if (Array.isArray(fileDiagnosticTuple) && fileDiagnosticTuple.length === 2) {
+          const diagnosticList = fileDiagnosticTuple[1];
+          if (Array.isArray(diagnosticList)) {
+            diagnosticList.forEach((d) => {
+              if (d && typeof d.severity === 'number') {
+                // severity: 0=Error, 1=Warning in VS Code
+                if (d.severity === 0) {
+                  errorCount++;
+                } else if (d.severity === 1) {
+                  warningCount++;
+                }
+              }
+            });
+          }
+        }
+      });
+
+      const summary = {
+        fileCount: diagnostics.length,
+        errorCount,
+        warningCount,
+      };
+
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(summary, null, 2),
+          },
+        ],
+      };
+    } catch (error) {
+      throw new McpError(
+        ErrorCode.InternalError,
+        `[handleGetDiagnosticsSummary] ${error instanceof Error ? error.message : String(error)}`
+      );
+    }
   }
 
   /**

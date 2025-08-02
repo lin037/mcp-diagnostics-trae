@@ -16,7 +16,7 @@ An MCP (Model Context Protocol) server specifically developed for Trae IDE, enab
 - **📁 File-level Diagnostics**: Get diagnostics for specific files with flexible path format support
 - **📊 Statistics Summary**: Quick overview of diagnostics statistics (file count, error count, warning count)
 - **🤖 AI Enhancement**: Enable Trae's AI Agent to understand code issues and provide precise fix suggestions
-- **🔌 Plugin-free**: Direct connection via Debug Adapter Protocol, no additional extensions required
+- **🔌 Extension Synergy**: Stable and efficient acquisition of diagnostic information through a companion VS Code extension.
 - **🎯 Smart Matching**: Supports relative paths, filenames, absolute URIs and other file path formats
 
 ## 🎯 Project Goals
@@ -29,11 +29,23 @@ This project is specifically designed for **Trae IDE** to enable Trae's AI Agent
 
 ## 🚀 Quick Start
 
-### Step 1: Clone and Build
+### Step 1: Install the VS Code Extension
+
+To enable this tool to access VS Code's diagnostic information, you first need to install the companion VS Code extension.
+
+1.  Open VS Code.
+2.  Open the Command Palette (`Ctrl+Shift+P` or `Cmd+Shift+P`).
+3.  Select **“Extensions: Install from VSIX...”**.
+4.  Locate and install the `trae-diagnostics-server-0.0.1.vsix` file from the `diagnostics-extension` directory of this project.
+5.  After installation, reload the VS Code window.
+
+Once installed, the extension will automatically run a local server in the background to provide diagnostic data.
+
+### Step 2: Clone and Build
 
 ```bash
 # Clone the project
-git clone <repository-url>
+git clone https://github.com/lin037/mcp-diagnostics-trae.git
 cd mcp-diagnostics
 
 # Install dependencies
@@ -43,7 +55,7 @@ npm install
 npm run build
 ```
 
-### Step 2: Configure in Trae
+### Step 3: Configure in Trae
 
 1. Open Trae's MCP settings
 2. Select `Add Manually`
@@ -63,13 +75,13 @@ npm run build
 
 **Note: Replace `/path/to/mcp-diagnostics` in args with the actual path where you cloned the project.**
 
-For example, if the project is in `/Users/username/mcp-diagnostics` directory after git clone:
+For example, if the project is in `E:/MCPWork/trae-diagnostics/mcp` directory after git clone:
 ```json
 {
   "mcpServers": {
     "diagnostics": {
       "command": "npx",
-      "args": ["-y", "/Users/username/mcp-diagnostics"]
+      "args": ["-y", "E:/MCPWork/trae-diagnostics/mcp"]
     }
   }
 }

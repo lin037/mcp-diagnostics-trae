@@ -16,7 +16,7 @@
 - **📁 文件级诊断**: 获取指定文件的诊断信息，支持多种路径格式
 - **📊 统计摘要**: 快速查看诊断统计（文件数、错误数、警告数）
 - **🤖 AI 增强**: 让 Trae 的 AI Agent 能够理解代码问题，提供更精准的修复建议
-- **🔌 无需插件**: 通过 Debug Adapter Protocol 直接连接，无需安装额外扩展
+- **🔌 扩展协同**: 通过配套的 VS Code 扩展，稳定、高效地获取诊断信息。
 - **🎯 智能匹配**: 支持相对路径、文件名、绝对URI等多种文件路径格式
 
 ## 🎯 项目目标
@@ -29,11 +29,23 @@
 
 ## 🚀 快速开始
 
-### 步骤 1: 克隆并构建项目
+### 步骤 1: 安装 VS Code 扩展
+
+为了让此工具能够访问 VS Code 的诊断信息，您需要先安装配套的 VS Code 扩展。
+
+1.  打开 VS Code。
+2.  打开命令面板 (`Ctrl+Shift+P` 或 `Cmd+Shift+P`)。
+3.  选择 **“扩展: 从 VSIX 安装...”**。
+4.  找到本项目 `diagnostics-extension` 目录下的 `trae-diagnostics-server-0.0.1.vsix` 文件并安装。
+5.  安装后，重新加载 VS Code 窗口。
+
+安装成功后，扩展会自动在后台运行一个本地服务器，用于提供诊断数据。
+
+### 步骤 2: 克隆并构建项目
 
 ```bash
 # 克隆项目
-git clone <repository-url>
+git clone https://github.com/lin037/mcp-diagnostics-trae.git
 cd mcp-diagnostics
 
 # 安装依赖
@@ -63,13 +75,16 @@ npm run build
 
 **注意：要将args中的`/path/to/mcp-diagnostics`替换为你clone下来项目的实际路径。**
 
-例如：git clone 后，项目在`/Users/username/mcp-diagnostics`目录下：
+例如：git clone 后，项目在`E:/MCPWork/trae-diagnostics/mcp`目录下：
 ```json
 {
   "mcpServers": {
     "diagnostics": {
       "command": "npx",
-      "args": ["-y", "/Users/username/mcp-diagnostics"]
+      "args": [
+        "-y",
+        "E:/MCPWork/trae-diagnostics/mcp"
+      ]
     }
   }
 }
