@@ -1,3 +1,5 @@
+[![MSeeP.ai Security Assessment Badge](https://mseep.net/pr/lin037-mcp-diagnostics-trae-badge.png)](https://mseep.ai/app/lin037-mcp-diagnostics-trae)
+
 # MCP Diagnostics - Trae IDE 诊断信息读取工具
 
 [![npm version](https://img.shields.io/npm/v/mcp-diagnostics.svg)](https://www.npmjs.com/package/mcp-diagnostics)
